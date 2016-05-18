@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/rabbit
+                http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
+
+    <rabbit:connection-factory id="cloudConnectionFactory" host="10.120.154.22" username="admin"
+                               password="EDA9fFbC1Z" port="5672" virtual-host="news_dev"/>
+
+    <bean id="cloudJsonMessageConverter"
+          class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"></bean>
+
+    <rabbit:template id="amqpTemplate" connection-factory="cloudConnectionFactory"
+                     exchange="myCloudExchange" message-converter="cloudJsonMessageConverter"/>
+
+    <rabbit:admin connection-factory="cloudConnectionFactory"/>
+
+    <!-- queue 队列声明-->
+    <rabbit:queue id="cloud_cache_new_list_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_cache_new_list_to_redis"/>
+    <rabbit:queue id="cloud_cache_hot_list_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_cache_hot_list_to_redis"/>
+    <rabbit:queue id="cloud_cache_self_hot_list_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_cache_self_hot_list_to_redis"/>
+    <rabbit:queue id="cloud_process_user_cmt_and_notice" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_process_user_cmt_and_notice"/>
+    <rabbit:queue id="cloud_cache_user_cmt_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_cache_user_cmt_to_redis"/>
+    <rabbit:queue id="cloud_process_thread_tl" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_process_thread_tl"/>
+    <rabbit:queue id="cloud_add_statistics_log" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_add_statistics_log"/>
+    <rabbit:queue id="cloud_add_comment_to_original_service" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_add_comment_to_original_service"/>
+    <rabbit:queue id="cloud_add_suggest_new_list_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_add_suggest_new_list_to_redis"/>
+    <rabbit:queue id="cloud_add_badword_cache_new_list_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_add_badword_cache_new_list_to_redis"/>
+    <rabbit:queue id="cloud_site_black_man_cache_list_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_site_black_man_cache_list_to_redis"/>
+    <rabbit:queue id="cloud_reload_thread_count_columns" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_reload_thread_count_columns"/>
+    <rabbit:queue id="cloud_reload_thread_union_count" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_reload_thread_union_count"/>
+    <rabbit:queue id="cloud_reload_multithread_union_count" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_reload_multithread_union_count"/>
+    <rabbit:queue id="cloud_comment_union_notice" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_comment_union_notice"/>
+    <rabbit:queue id="cloud_add_vote_to_db" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_add_vote_to_db"/>
+    <rabbit:queue id="cloud_add_thread_vote_to_db" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_add_thread_vote_to_db"/>
+    <rabbit:queue id="cloud_notify_reload_site_comment_index" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_notify_reload_site_comment_index"/>
+    <rabbit:queue id="cloud_notify_reload_site_comment_list_index" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_notify_reload_site_comment_list_index"/>
+    <rabbit:queue id="cloud_notify_delete_site_comment_list_index" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_notify_delete_site_comment_list_index"/>
+    <rabbit:queue id="cloud_comment_doubleunion" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_comment_doubleunion"/>
+    <rabbit:queue id="cloud_comment_join_doubleunion" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_comment_join_doubleunion"/>
+    <rabbit:queue id="cloud_comment_quit_doubleunion" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_comment_quit_doubleunion"/>
+    <rabbit:queue id="cloud_comment_singleunion" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_comment_singleunion"/>
+    <rabbit:queue id="cloud_cache_cmt_notice_to_redis" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_cache_cmt_notice_to_redis"/>
+    <rabbit:queue id="cloud_site_comment_page_ids" durable="true" auto-delete="false" exclusive="false"
+                  name="cloud_site_comment_page_ids"/>
+    <rabbit:queue id="send_comment_to_thirdparty_platform" durable="true" auto-delete="false" exclusive="false"
+                  name="send_comment_to_thirdparty_platform"/>
+    <rabbit:queue id="ndir_index_update_nickname" durable="true" auto-delete="false" exclusive="false"
+                  name="ndir_index_update_nickname"/>
+    <rabbit:direct-exchange name="myCloudExchange" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="cloud_cache_new_list_to_redis" key="cloud_cache_new_list_to_redis_key"/>
+            <rabbit:binding queue="cloud_cache_hot_list_to_redis" key="cloud_cache_hot_list_to_redis_key"/>
+            <rabbit:binding queue="cloud_cache_self_hot_list_to_redis" key="cloud_cache_self_hot_list_to_redis_key"/>
+            <rabbit:binding queue="cloud_process_user_cmt_and_notice" key="cloud_process_user_cmt_and_notice_key"/>
+            <rabbit:binding queue="cloud_cache_user_cmt_to_redis" key="cloud_cache_user_cmt_to_redis_key"/>
+            <rabbit:binding queue="cloud_process_thread_tl" key="cloud_process_thread_tl_key"/>
+            <rabbit:binding queue="cloud_add_statistics_log" key="cloud_add_statistics_log_key"/>
+            <rabbit:binding queue="cloud_add_comment_to_original_service"
+                            key="cloud_add_comment_to_original_service_key"/>
+            <rabbit:binding queue="cloud_add_suggest_new_list_to_redis" key="cloud_add_suggest_new_list_to_redis_key"/>
+            <rabbit:binding queue="cloud_add_badword_cache_new_list_to_redis"
+                            key="cloud_add_badword_cache_new_list_to_redis_key"/>
+            <rabbit:binding queue="cloud_site_black_man_cache_list_to_redis"
+                            key="cloud_site_black_man_cache_list_to_redis_key"/>
+            <rabbit:binding queue="cloud_reload_thread_count_columns" key="cloud_reload_thread_count_columns_key"/>
+            <rabbit:binding queue="cloud_reload_thread_union_count" key="cloud_reload_thread_union_count_key"/>
+            <rabbit:binding queue="cloud_reload_multithread_union_count"
+                            key="cloud_reload_multithread_union_count_key"/>
+            <rabbit:binding queue="cloud_comment_union_notice" key="cloud_comment_union_notice_key"/>
+            <rabbit:binding queue="cloud_add_vote_to_db" key="cloud_add_vote_to_db_key"/>
+            <rabbit:binding queue="cloud_add_thread_vote_to_db" key="cloud_add_thread_vote_to_db_key"/>
+            <rabbit:binding queue="cloud_notify_reload_site_comment_index"
+                            key="cloud_notify_reload_site_comment_index_key"/>
+            <rabbit:binding queue="cloud_notify_reload_site_comment_list_index"
+                            key="cloud_notify_reload_site_comment_list_index_key"/>
+            <rabbit:binding queue="cloud_notify_delete_site_comment_list_index"
+                            key="cloud_notify_delete_site_comment_list_index_key"/>
+            <rabbit:binding queue="cloud_comment_doubleunion" key="cloud_comment_doubleunion_key"/>
+            <rabbit:binding queue="cloud_comment_join_doubleunion" key="cloud_comment_join_doubleunion_key"/>
+            <rabbit:binding queue="cloud_comment_quit_doubleunion" key="cloud_comment_quit_doubleunion_key"/>
+            <rabbit:binding queue="cloud_comment_singleunion" key="cloud_comment_singleunion_key"/>
+            <rabbit:binding queue="cloud_cache_cmt_notice_to_redis" key="cloud_cache_cmt_notice_to_redis_key"/>
+            <rabbit:binding queue="cloud_site_comment_page_ids" key="cloud_site_comment_page_ids_key"/>
+            <rabbit:binding queue="send_comment_to_thirdparty_platform" key="send_comment_to_thirdparty_platform_key"/>
+            <rabbit:binding queue="ndir_index_update_nickname" key="ndir_index_update_nickname_key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+</beans>
