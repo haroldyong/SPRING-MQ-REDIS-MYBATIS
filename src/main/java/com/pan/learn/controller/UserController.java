@@ -4,6 +4,7 @@ import com.pan.learn.cache.BaseCache;
 import com.pan.learn.meta.po.UserData;
 import com.pan.learn.queue.producter.IMessageSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,13 +21,17 @@ public class UserController {
     private IMessageSender messageSender;
     @Autowired
     private BaseCache baseCache;
+    @Value("${defualt.user.name}")
+    private String userName;
+    @Value("${defualt.user.sex}")
+    private String userSex;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody
     public Object getUser(Long userId){
         UserData userData = new UserData();
         userData.setUserId(1l);
-        userData.setUserName("pan");
+        userData.setUserName(userName);
         messageSender.addUser(userData);
         return userData;
     }
